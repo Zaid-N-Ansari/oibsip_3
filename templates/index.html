@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo</title>
+    <link rel="shortcut icon" href="{% static '/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+    <script src="{% static '/js/bootstrap.min.js' %}"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        * { font-family: 'Nunito', sans-serif; }
+        body, html { height: 100vh; width: 100%; }
+        .container-fluid {
+            height: inherit;
+            background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
+        }
+        .col-md-5, .col-sm-5 {
+            height: 60vh;
+        }
+        .hov:hover{
+            background-color: #ba83ca;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-5 col-sm-5 d-flex align-items-center justify-content-center">
+                <form action="{% url 'index' %}" method="POST" class="w-75">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input placeholder="Title" spellcheck="false" class="form-control" type="text" name="title" id="ToDoItemTitle" />
+                    </div>
+                    <div class="form-group mt-4">
+                        <textarea placeholder="Description" spellcheck="false" class="form-control" name="desc" id="ToDoItemDesc" cols="30" rows="10" style="resize: none;"></textarea>
+                    </div>
+                    <input type="submit" class="btn btn-sm text-primary mt-3 float-end hov" value="Save" name="save" />
+                    {% for msg in messages %}
+                        <div class="alert alert-warning p-0 fade show mt-5 w-75">
+                            <p class="d-inline-block ps-2 my-2">{{msg}}</p>
+                            <button class="close border-0 bg-transparent fs-4 float-end" data-dismiss="alert">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+                        <script>
+                                $(function(){
+                                    $('button.close').click(function(e){
+                                        $('div.alert').alert('close');
+                                        e.preventDefault();
+                                    });
+                                });
+                        </script>
+                    {% endfor %}
+                </form>
+            </div>
+            <div class="col-md-7 col-sm-7">
+                <table class="table text-center mt-5 user-select-none">
+                    <tr>
+                        <thead>
+                            <tr class="fs-5">
+                                <th>Title</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                                <tr class="fs-5">
+                                    <td>{{item.ToDoItemTitle}}</td>
+                                    <td>{{item.ToDoItemDesc}}</td>
+                                    <td name="delete">
+                                        <form action="{% url 'delete' item.ToDoItemTitle %}" method="POST">
+                                            {% csrf_token %}
+                                            <input class="border-0 bg-transparent text-danger" type="submit" value="&times;">
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
